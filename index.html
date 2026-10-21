@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<!-- Zyvora — test intro page. Persian (RTL) by default, English (LTR) via toggle. -->
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Zyvora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@700;800&family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ========== Design tokens ========== */
+:root{
+  --bg:#0a0a0f;
+  --text:#ecebf6;
+  --muted:#a3a1bb;
+  --violet:#8b5cf6;
+  --cyan:#22d3ee;
+  --glass:rgba(255,255,255,.04);
+  --line:rgba(255,255,255,.09);
+  --grad:linear-gradient(120deg,var(--violet),var(--cyan));
+  --grad-loop:linear-gradient(90deg,var(--violet),var(--cyan),var(--violet));
+  --ease:cubic-bezier(.22,1,.36,1);
+  --font:'Vazirmatn',system-ui,sans-serif;   /* Persian (default) */
+  color-scheme:dark;
+}
+html[lang="en"]{--font:'Inter','Vazirmatn',system-ui,sans-serif}  /* English */
+
+*{box-sizing:border-box;margin:0}
+html{background:var(--bg)}
+body{
+  background:var(--bg);color:var(--text);font-family:var(--font);
+  line-height:1.8;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+
+/* ========== Background layers (gradient, orbs, canvas particles) ========== */
+.stage{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+
+/* Slowly shifting gradient */
+.bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 20% 25%,rgba(139,92,246,.30),transparent 40%),
+    radial-gradient(circle at 80% 75%,rgba(34,211,238,.22),transparent 40%),
+    radial-gradient(circle at 50% 50%,rgba(192,38,211,.10),transparent 45%);
+  background-size:200% 200%;
+  animation:drift 22s ease-in-out infinite alternate;
+}
+@keyframes drift{from{background-position:0% 0%}to{background-position:100% 100%}}
+
+/* Floating glowing orbs */
+.orb{position:absolute;border-radius:50%;opacity:.5;animation:float 18s ease-in-out infinite alternate}
+.o1{width:46vmax;height:46vmax;top:-14vmax;left:-12vmax;background:radial-gradient(circle,var(--violet),transparent 65%)}
+.o2{width:40vmax;height:40vmax;bottom:-14vmax;right:-10vmax;background:radial-gradient(circle,var(--cyan),transparent 65%);animation-duration:24s;animation-delay:-7s}
+.o3{width:24vmax;height:24vmax;top:42%;left:46%;background:radial-gradient(circle,#c026d3,transparent 65%);opacity:.3;animation-duration:30s;animation-delay:-12s}
+@keyframes float{to{transform:translate3d(7vmax,-5vmax,0) scale(1.18)}}
+
+#fx{position:absolute;inset:0;width:100%;height:100%}
+
+/* ========== Layout ========== */
+main{position:relative;z-index:1}
+section{padding:0 1.5rem}
+
+.hero{min-height:100svh;display:grid;place-items:center;padding-top:5rem;padding-bottom:3rem;text-align:center}
+.hero-in{display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:760px}
+
+/* ========== Language toggle (fixed, physical top-right so it never jumps) ========== */
+.lang{
+  position:fixed;top:1rem;right:1rem;z-index:10;
+  padding:.5rem 1.1rem;border-radius:999px;cursor:pointer;
+  font:500 .9rem/1.4 var(--font);color:var(--text);
+  background:rgba(10,10,15,.55);border:1px solid var(--line);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:transform .3s var(--ease),box-shadow .3s,border-color .3s;
+}
+.lang:hover{transform:scale(1.06);border-color:var(--violet);box-shadow:0 0 18px rgba(139,92,246,.45)}
+.lang:focus-visible,.cta:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+
+/* ========== Badge ========== */
+.badge{
+  display:inline-flex;align-items:center;gap:.55rem;
+  padding:.3rem .95rem;border-radius:999px;font-size:.88rem;
+  background:rgba(139,92,246,.13);border:1px solid rgba(139,92,246,.45);
+}
+.badge::before{
+  content:"";width:.5rem;height:.5rem;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 10px var(--cyan);animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{50%{transform:scale(1.7);opacity:.45}}
+
+/* ========== Wordmark: always LTR, letters animate in one by one ========== */
+.wordmark{
+  display:flex;justify-content:center;direction:ltr;unicode-bidi:isolate;
+  font:800 clamp(3.6rem,17vw,9.5rem)/1.05 'Poppins',sans-serif;
+}
+.wordmark span{
+  display:inline-block;
+  text-shadow:0 0 38px color-mix(in srgb,currentColor 55%,transparent);
+  /* entrance, then a gentle endless bobbing that starts after the entrance */
+  animation:
+    letterIn 1s var(--ease) calc(.2s + var(--i)*.11s) both,
+    bob 5s ease-in-out calc(1.6s + var(--i)*.18s) infinite;
+}
+@keyframes letterIn{
+  from{opacity:0;transform:translateY(55%) rotate(9deg) scale(.6);filter:blur(14px)}
+  to{opacity:1;transform:none;filter:blur(0)}
+}
+@keyframes bob{50%{transform:translateY(-7px)}}
+
+/* ========== Tagline (typewriter) ========== */
+.tagline{
+  min-height:1.9em;font-size:clamp(1.3rem,3.8vw,2rem);font-weight:500;
+  background:var(--grad-loop);background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shine 6s linear infinite;
+}
+.tagline::after{ /* blinking caret */
+  content:"";display:inline-block;width:2px;height:1em;margin-inline-start:5px;
+  vertical-align:-.15em;background:var(--cyan);animation:blink 1s steps(1) infinite;
+}
+@keyframes shine{to{background-position:200% 0}}
+@keyframes blink{50%{opacity:0}}
+
+.lead{color:var(--muted);font-size:clamp(1rem,2.5vw,1.16rem);max-width:34em}
+
+/* ========== Call to action ========== */
+.cta{
+  position:relative;overflow:hidden;border:0;cursor:pointer;margin-top:.5rem;
+  padding:.95rem 2.4rem;border-radius:999px;
+  font:700 1.02rem/1.4 var(--font);color:#0a0a0f;
+  background:linear-gradient(120deg,var(--violet),var(--cyan),var(--violet));background-size:200% 100%;
+  box-shadow:0 10px 30px -10px rgba(139,92,246,.7);
+  transition:transform .35s var(--ease),box-shadow .35s,background-position .7s;
+}
+.cta::after{ /* shimmer sweep */
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.6) 50%,transparent 70%);
+  transform:translateX(-130%);
+}
+.cta:hover{
+  transform:scale(1.07);background-position:100% 0;
+  box-shadow:0 0 28px 4px rgba(139,92,246,.6),0 0 70px rgba(34,211,238,.4);
+}
+.cta:hover::after{transform:translateX(130%);transition:transform .9s var(--ease)}
+.cta:active{transform:scale(.97)}
+
+/* ========== Content sections ========== */
+.block{display:flex;justify-content:center;padding-top:5rem;padding-bottom:5rem}
+.card{
+  width:100%;max-width:680px;padding:2.4rem 2rem;border-radius:22px;text-align:center;
+  background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.card h2,.end h2{font-size:clamp(1.5rem,4vw,2rem);font-weight:700;line-height:1.4;margin-bottom:.8rem}
+.card p,.end p{color:var(--muted);font-size:1.06rem}
+.divider{height:2px;width:0;margin:0 auto 1.4rem;background:var(--grad);border-radius:2px;transition:width 1.2s var(--ease) .3s}
+.in .divider,.divider.in{width:72px}
+.end{min-height:60svh;display:grid;place-items:center;text-align:center;padding-bottom:6rem}
+
+/* ========== Scroll reveal (fade + slide up) and language fade ========== */
+[data-i18n]{transition:opacity .5s}
+.reveal{
+  opacity:0;transform:translateY(30px);
+  transition:opacity .9s var(--ease) var(--d,0s),transform .9s var(--ease) var(--d,0s);
+}
+.reveal.in{opacity:1;transform:none}
+body.fading [data-i18n]{opacity:0!important;transition:opacity .3s}  /* fade out while text swaps */
+body.fading .tagline{opacity:0;transition:opacity .3s}
+.tagline{transition:opacity .4s}
+
+/* ========== Small screens ========== */
+@media (max-width:600px){
+  .card{padding:1.8rem 1.25rem}
+  .lang{top:.7rem;right:.7rem;padding:.4rem .9rem}
+  .block{padding-top:3.5rem;padding-bottom:3.5rem}
+}
+
+/* ========== Reduced motion: effectively disable animation ========== */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;transition-delay:0s!important;
+  }
+  .tagline::after{animation:none}
+}
+</style>
+</head>
+
+<body>
+<!-- Animated background -->
+<div class="stage" aria-hidden="true">
+  <div class="bg"></div>
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+  <canvas id="fx"></canvas>
+</div>
+
+<button class="lang" id="langBtn" type="button"></button>
+
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-in">
+      <span class="badge reveal" data-i18n="badge" style="--d:.1s"></span>
+      <h1 class="wordmark" id="wordmark" aria-label="Zyvora"></h1>
+      <p class="tagline" id="tagline" aria-live="polite"></p>
+      <p class="lead reveal" data-i18n="lead" style="--d:.5s"></p>
+      <button class="cta reveal" id="cta" type="button" data-i18n="cta" style="--d:.7s"></button>
+    </div>
+  </section>
+
+  <!-- Intro -->
+  <section class="block">
+    <div class="card reveal">
+      <div class="divider"></div>
+      <h2 data-i18n="aboutTitle"></h2>
+      <p data-i18n="aboutText"></p>
+    </div>
+  </section>
+
+  <!-- End of page (target of the CTA) -->
+  <section class="end" id="end">
+    <div class="reveal">
+      <div class="divider"></div>
+      <h2 data-i18n="endTitle"></h2>
+      <p data-i18n="endText"></p>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ========== All text, keyed by language ========== */
+const T = {
+  fa: {
+    title: 'Zyvora | معرفی',
+    toggle: 'English',
+    toggleAria: 'تغییر زبان به انگلیسی',
+    badge: 'صفحهٔ تست',
+    tagline: 'معرفی Zyvora',
+    lead: 'Zyvora یک برند تازه است که ایده‌های بزرگ را ساده، سریع و زیبا به زندگی می‌آورد. این صفحه فقط یک نمونهٔ آزمایشی است.',
+    cta: 'بیشتر بدانید',
+    aboutTitle: 'دربارهٔ Zyvora',
+    aboutText: 'این یک متن نمونه است. Zyvora با طراحی تمیز، حرکت روان و توجه به جزئیات ساخته می‌شود تا تجربه‌ای هم دیدنی و هم ماندگار بسازد.',
+    endTitle: 'پایان صفحهٔ آزمایشی',
+    endText: 'ممنون که این نسخهٔ آزمایشی را دیدید.'
+  },
+  en: {
+    title: 'Zyvora | Introducing',
+    toggle: 'فارسی',
+    toggleAria: 'Switch language to Persian',
+    badge: 'Test page',
+    tagline: 'Introducing Zyvora',
+    lead: 'Zyvora is a fresh brand that brings big ideas to life: simple, fast and beautiful. This page is only a test sample.',
+    cta: 'Learn more',
+    aboutTitle: 'About Zyvora',
+    aboutText: 'This is placeholder text. Zyvora is shaped by clean design, smooth motion and attention to detail, aiming for an experience that is both striking and lasting.',
+    endTitle: 'End of the test page',
+    endText: 'Thanks for checking out this test version.'
+  }
+};
+
+const $  = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const html = document.documentElement;
+const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
+const reduced = () => motionQuery.matches;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+let lang = 'fa';       // current language
+let busy = false;      // blocks double clicks during a switch
+let typeId = 0;        // cancels an unfinished typewriter run
+
+/* ========== Wordmark: one span per letter, colored along the gradient ========== */
+(function buildWordmark(){
+  const word = 'Zyvora', a = [139,92,246], b = [34,211,238];  // violet -> cyan
+  [...word].forEach((ch, i) => {
+    const s = document.createElement('span');
+    const t = i / (word.length - 1);
+    s.textContent = ch;
+    s.setAttribute('aria-hidden', 'true');
+    s.style.setProperty('--i', i);
+    s.style.color = `rgb(${a.map((v, k) => Math.round(v + (b[k] - v) * t)).join(',')})`;
+    $('#wordmark').appendChild(s);
+  });
+})();
+
+/* ========== Typewriter (restarts on every call) ========== */
+async function typeTagline(text){
+  const el = $('#tagline'), id = ++typeId;
+  el.textContent = '';
+  if (reduced()) { el.textContent = text; return; }
+  for (let i = 1; i <= text.length; i++) {
+    await sleep(70);
+    if (id !== typeId) return;           // a newer run took over
+    el.textContent = text.slice(0, i);
+  }
+}
+
+/* ========== Apply a language: dir, lang, texts, font (via CSS var on [lang]) ========== */
+function applyLang(l){
+  const d = T[l];
+  lang = l;
+  html.lang = l;
+  html.dir = l === 'fa' ? 'rtl' : 'ltr';
+  document.title = d.title;
+  $$('[data-i18n]').forEach(el => el.textContent = d[el.dataset.i18n]);
+  const btn = $('#langBtn');
+  btn.textContent = d.toggle;
+  btn.setAttribute('aria-label', d.toggleAria);
+}
+
+/* Fade out -> swap -> fade in -> retype the tagline */
+async function switchLang(){
+  if (busy) return;
+  busy = true;
+  const next = lang === 'fa' ? 'en' : 'fa';
+  typeId++;                                 // stop any running typewriter
+  document.body.classList.add('fading');
+  await sleep(reduced() ? 0 : 350);
+  applyLang(next);
+  $('#tagline').textContent = '';
+  document.body.classList.remove('fading');
+  typeTagline(T[next].tagline);
+  busy = false;
+}
+$('#langBtn').addEventListener('click', switchLang);
+
+/* ========== Scroll reveal ========== */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+}, { threshold: .2 });
+$$('.reveal').forEach(el => io.observe(el));
+
+/* ========== CTA: smooth scroll to the bottom of the page ========== */
+$('#cta').addEventListener('click', () => {
+  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: reduced() ? 'auto' : 'smooth' });
+});
+
+/* ========== Canvas: soft glowing particles drifting upward ========== */
+(function particles(){
+  const cv = $('#fx'), cx = cv.getContext('2d');
+  const colors = ['139,92,246', '34,211,238', '192,132,252'];
+  let W, H, dpr, P = [];
+
+  function make(){
+    return {
+      x: Math.random() * W, y: Math.random() * H,
+      r: (Math.random() * 1.8 + .8) * dpr,
+      vx: (Math.random() - .5) * .25 * dpr,
+      vy: -(Math.random() * .35 + .08) * dpr,
+      c: colors[Math.floor(Math.random() * colors.length)],
+      ph: Math.random() * 6.28
+    };
+  }
+  function resize(){
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    W = cv.width = innerWidth * dpr;
+    H = cv.height = innerHeight * dpr;
+    P = Array.from({ length: Math.max(24, Math.min(70, Math.round(innerWidth / 22))) }, make);
+    if (reduced()) draw(0);                 // static frame when motion is reduced
+  }
+  function draw(t){
+    cx.clearRect(0, 0, W, H);
+    for (const p of P) {
+      const a = .35 + .35 * Math.sin(t * .0015 + p.ph);
+      cx.fillStyle = `rgba(${p.c},${a * .12})`;           // outer glow
+      cx.beginPath(); cx.arc(p.x, p.y, p.r * 5, 0, 6.28); cx.fill();
+      cx.fillStyle = `rgba(${p.c},${a + .15})`;           // bright core
+      cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.28); cx.fill();
+    }
+  }
+  function loop(t){
+    if (!reduced()) {
+      for (const p of P) {
+        p.x += p.vx; p.y += p.vy;
+        if (p.y < -20) { p.y = H + 20; p.x = Math.random() * W; }
+        if (p.x < -20) p.x = W + 20; else if (p.x > W + 20) p.x = -20;
+      }
+      draw(t);
+    }
+    requestAnimationFrame(loop);
+  }
+  addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(loop);
+})();
+
+/* ========== Start ========== */
+applyLang('fa');
+setTimeout(() => typeTagline(T.fa.tagline), reduced() ? 0 : 1300);   // after the wordmark lands
+</script>
+</body>
+</html>
