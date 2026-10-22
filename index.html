@@ -1,396 +1,1418 @@
+
 <!DOCTYPE html>
-<!-- Zyvora — test intro page. Persian (RTL) by default, English (LTR) via toggle. -->
-<html lang="fa" dir="rtl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark">
-<title>Zyvora</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08070d">
+<meta name="description" content="ZYVORA is a technology ecosystem building software, artificial intelligence, games, developer tools and digital experiences.">
+<meta name="keywords" content="ZYVORA, AI, software development, game development, technology, developer tools">
+<meta name="author" content="ZYVORA">
+<meta property="og:title" content="ZYVORA | Technology Ecosystem">
+<meta property="og:description" content="Build. Create. Innovate. Explore the ZYVORA technology ecosystem.">
+<meta property="og:type" content="website">
+<title>ZYVORA | Technology Ecosystem</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@700;800&family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
-/* ========== Design tokens ========== */
 :root{
-  --bg:#0a0a0f;
-  --text:#ecebf6;
-  --muted:#a3a1bb;
-  --violet:#8b5cf6;
-  --cyan:#22d3ee;
-  --glass:rgba(255,255,255,.04);
-  --line:rgba(255,255,255,.09);
-  --grad:linear-gradient(120deg,var(--violet),var(--cyan));
-  --grad-loop:linear-gradient(90deg,var(--violet),var(--cyan),var(--violet));
-  --ease:cubic-bezier(.22,1,.36,1);
-  --font:'Vazirmatn',system-ui,sans-serif;   /* Persian (default) */
-  color-scheme:dark;
+  --bg:#08070d;
+  --bg2:#0e0c17;
+  --panel:rgba(255,255,255,.035);
+  --panel2:rgba(255,255,255,.06);
+  --purple:#9b5cff;
+  --purple2:#713cff;
+  --cyan:#65e6ff;
+  --text:#f5f1ff;
+  --muted:#a19aaf;
+  --border:rgba(183,143,255,.15);
+  --glow:rgba(137,67,255,.25);
+  --nav-height:76px;
 }
-html[lang="en"]{--font:'Inter','Vazirmatn',system-ui,sans-serif}  /* English */
-
-*{box-sizing:border-box;margin:0}
-html{background:var(--bg)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:95px}
 body{
-  background:var(--bg);color:var(--text);font-family:var(--font);
-  line-height:1.8;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial,sans-serif;
+  overflow-x:hidden;
+  line-height:1.7;
 }
-
-/* ========== Background layers (gradient, orbs, canvas particles) ========== */
-.stage{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
-
-/* Slowly shifting gradient */
-.bg{
-  position:absolute;inset:0;
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  pointer-events:none;
   background:
-    radial-gradient(circle at 20% 25%,rgba(139,92,246,.30),transparent 40%),
-    radial-gradient(circle at 80% 75%,rgba(34,211,238,.22),transparent 40%),
-    radial-gradient(circle at 50% 50%,rgba(192,38,211,.10),transparent 45%);
-  background-size:200% 200%;
-  animation:drift 22s ease-in-out infinite alternate;
+    radial-gradient(ellipse at 15% 15%,rgba(101,50,190,.15),transparent 40%),
+    radial-gradient(ellipse at 85% 50%,rgba(45,30,100,.13),transparent 45%),
+    radial-gradient(ellipse at 50% 100%,rgba(92,36,160,.1),transparent 40%);
 }
-@keyframes drift{from{background-position:0% 0%}to{background-position:100% 100%}}
-
-/* Floating glowing orbs */
-.orb{position:absolute;border-radius:50%;opacity:.5;animation:float 18s ease-in-out infinite alternate}
-.o1{width:46vmax;height:46vmax;top:-14vmax;left:-12vmax;background:radial-gradient(circle,var(--violet),transparent 65%)}
-.o2{width:40vmax;height:40vmax;bottom:-14vmax;right:-10vmax;background:radial-gradient(circle,var(--cyan),transparent 65%);animation-duration:24s;animation-delay:-7s}
-.o3{width:24vmax;height:24vmax;top:42%;left:46%;background:radial-gradient(circle,#c026d3,transparent 65%);opacity:.3;animation-duration:30s;animation-delay:-12s}
-@keyframes float{to{transform:translate3d(7vmax,-5vmax,0) scale(1.18)}}
-
-#fx{position:absolute;inset:0;width:100%;height:100%}
-
-/* ========== Layout ========== */
-main{position:relative;z-index:1}
-section{padding:0 1.5rem}
-
-.hero{min-height:100svh;display:grid;place-items:center;padding-top:5rem;padding-bottom:3rem;text-align:center}
-.hero-in{display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:760px}
-
-/* ========== Language toggle (fixed, physical top-right so it never jumps) ========== */
-.lang{
-  position:fixed;top:1rem;right:1rem;z-index:10;
-  padding:.5rem 1.1rem;border-radius:999px;cursor:pointer;
-  font:500 .9rem/1.4 var(--font);color:var(--text);
-  background:rgba(10,10,15,.55);border:1px solid var(--line);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  transition:transform .3s var(--ease),box-shadow .3s,border-color .3s;
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  opacity:.16;
+  background-image:
+    linear-gradient(rgba(180,140,255,.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(180,140,255,.07) 1px,transparent 1px);
+  background-size:55px 55px;
+  mask-image:linear-gradient(to bottom,black,transparent 90%);
 }
-.lang:hover{transform:scale(1.06);border-color:var(--violet);box-shadow:0 0 18px rgba(139,92,246,.45)}
-.lang:focus-visible,.cta:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
-
-/* ========== Badge ========== */
-.badge{
-  display:inline-flex;align-items:center;gap:.55rem;
-  padding:.3rem .95rem;border-radius:999px;font-size:.88rem;
-  background:rgba(139,92,246,.13);border:1px solid rgba(139,92,246,.45);
+a{color:inherit;text-decoration:none}
+button,input,textarea{font:inherit}
+button{color:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--cyan);
+  outline-offset:4px;
 }
-.badge::before{
-  content:"";width:.5rem;height:.5rem;border-radius:50%;background:var(--cyan);
-  box-shadow:0 0 10px var(--cyan);animation:pulse 2s ease-in-out infinite;
+::selection{background:var(--purple);color:white}
+.container{width:min(1160px,90%);margin:auto}
+.section{position:relative;padding:110px 0}
+.section-head{max-width:700px;margin-bottom:52px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:.75rem;font-weight:800;letter-spacing:3px;
+  text-transform:uppercase;color:var(--cyan);
 }
-@keyframes pulse{50%{transform:scale(1.7);opacity:.45}}
-
-/* ========== Wordmark: always LTR, letters animate in one by one ========== */
-.wordmark{
-  display:flex;justify-content:center;direction:ltr;unicode-bidi:isolate;
-  font:800 clamp(3.6rem,17vw,9.5rem)/1.05 'Poppins',sans-serif;
+.eyebrow::before{
+  content:"";width:22px;height:1px;background:var(--cyan);
+  box-shadow:0 0 12px var(--cyan)
 }
-.wordmark span{
-  display:inline-block;
-  text-shadow:0 0 38px color-mix(in srgb,currentColor 55%,transparent);
-  /* entrance, then a gentle endless bobbing that starts after the entrance */
-  animation:
-    letterIn 1s var(--ease) calc(.2s + var(--i)*.11s) both,
-    bob 5s ease-in-out calc(1.6s + var(--i)*.18s) infinite;
+h2.section-title{
+  font-size:clamp(2rem,5vw,3.5rem);
+  line-height:1.15;letter-spacing:-1.5px;
+  margin:18px 0;
 }
-@keyframes letterIn{
-  from{opacity:0;transform:translateY(55%) rotate(9deg) scale(.6);filter:blur(14px)}
-  to{opacity:1;transform:none;filter:blur(0)}
-}
-@keyframes bob{50%{transform:translateY(-7px)}}
-
-/* ========== Tagline (typewriter) ========== */
-.tagline{
-  min-height:1.9em;font-size:clamp(1.3rem,3.8vw,2rem);font-weight:500;
-  background:var(--grad-loop);background-size:200% 100%;
+.gradient-text{
+  background:linear-gradient(100deg,#fff 0%,#c5a1ff 45%,#8b55ff 75%,#65e6ff 110%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
-  animation:shine 6s linear infinite;
 }
-.tagline::after{ /* blinking caret */
-  content:"";display:inline-block;width:2px;height:1em;margin-inline-start:5px;
-  vertical-align:-.15em;background:var(--cyan);animation:blink 1s steps(1) infinite;
+.section-desc{color:var(--muted);max-width:620px;font-size:.98rem}
+.purple{color:var(--purple)}
+.muted{color:var(--muted)}
+/* Navigation */
+.navbar{
+  position:fixed;z-index:1000;top:0;left:0;width:100%;
+  height:var(--nav-height);
+  display:flex;align-items:center;
+  background:rgba(8,7,13,.72);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid transparent;
+  transition:.3s;
 }
-@keyframes shine{to{background-position:200% 0}}
-@keyframes blink{50%{opacity:0}}
-
-.lead{color:var(--muted);font-size:clamp(1rem,2.5vw,1.16rem);max-width:34em}
-
-/* ========== Call to action ========== */
-.cta{
-  position:relative;overflow:hidden;border:0;cursor:pointer;margin-top:.5rem;
-  padding:.95rem 2.4rem;border-radius:999px;
-  font:700 1.02rem/1.4 var(--font);color:#0a0a0f;
-  background:linear-gradient(120deg,var(--violet),var(--cyan),var(--violet));background-size:200% 100%;
-  box-shadow:0 10px 30px -10px rgba(139,92,246,.7);
-  transition:transform .35s var(--ease),box-shadow .35s,background-position .7s;
+.navbar.scrolled{border-color:var(--border);background:rgba(8,7,13,.92)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.logo{display:flex;align-items:center;gap:11px;flex-shrink:0}
+.logo-mark{
+  width:39px;height:39px;display:grid;place-items:center;
+  border:1px solid rgba(179,131,255,.5);
+  border-radius:12px;
+  color:#fff;font-family:Orbitron,sans-serif;font-weight:900;
+  font-size:1.25rem;
+  background:linear-gradient(145deg,rgba(151,89,255,.3),rgba(15,10,28,.9));
+  box-shadow:0 0 25px rgba(130,65,255,.14),inset 0 0 14px rgba(155,92,255,.12);
 }
-.cta::after{ /* shimmer sweep */
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.6) 50%,transparent 70%);
-  transform:translateX(-130%);
+.logo-name{font-family:Orbitron,sans-serif;font-size:1.05rem;font-weight:800;letter-spacing:2px}
+.logo-sub{font-size:.57rem;color:var(--muted);letter-spacing:2px;margin-top:-3px}
+.nav-links{display:flex;align-items:center;gap:25px}
+.nav-links a{
+  color:#c4bdcf;font-size:.79rem;font-weight:600;
+  transition:color .2s;position:relative;
 }
-.cta:hover{
-  transform:scale(1.07);background-position:100% 0;
-  box-shadow:0 0 28px 4px rgba(139,92,246,.6),0 0 70px rgba(34,211,238,.4);
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-links a::after{
+  content:"";position:absolute;left:0;bottom:-8px;width:0;height:2px;
+  background:var(--purple);transition:width .25s;
 }
-.cta:hover::after{transform:translateX(130%);transition:transform .9s var(--ease)}
-.cta:active{transform:scale(.97)}
-
-/* ========== Content sections ========== */
-.block{display:flex;justify-content:center;padding-top:5rem;padding-bottom:5rem}
+.nav-links a:hover::after{width:100%}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.lang-btn,.menu-btn{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;padding:9px 12px;cursor:pointer;
+}
+.lang-btn{font-size:.73rem;font-weight:800}
+.menu-btn{display:none;font-size:1.3rem;line-height:1}
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:47px;padding:12px 21px;border-radius:11px;
+  font-size:.83rem;font-weight:800;letter-spacing:.15px;
+  border:1px solid transparent;cursor:pointer;transition:.25s;
+}
+.btn-primary{
+  color:#fff;background:linear-gradient(110deg,#8846ff,#6230d9);
+  box-shadow:0 8px 28px rgba(113,60,255,.22);
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 38px rgba(113,60,255,.4)}
+.btn-outline{border-color:var(--border);background:rgba(255,255,255,.025)}
+.btn-outline:hover{border-color:var(--purple);background:rgba(151,92,255,.1);transform:translateY(-2px)}
+/* Hero */
+.hero{
+  min-height:100svh;padding:145px 0 75px;
+  display:flex;align-items:center;position:relative;isolation:isolate;
+}
+.hero-grid{
+  display:grid;grid-template-columns:1.05fr .95fr;
+  align-items:center;gap:35px;
+}
+.status{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:8px 13px;border:1px solid var(--border);
+  border-radius:100px;background:rgba(255,255,255,.025);
+  font-size:.7rem;letter-spacing:.6px;color:#d5ccdf;margin-bottom:25px;
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;background:#6dffb2;
+  box-shadow:0 0 12px #6dffb2;animation:pulse 2s infinite;
+}
+.hero h1{
+  font-size:clamp(3.2rem,7.3vw,6.4rem);
+  line-height:.98;letter-spacing:-5px;font-weight:900;
+}
+.hero h1 .line2{display:block;margin-top:10px}
+.hero-description{color:var(--muted);max-width:510px;margin:26px 0 30px;font-size:1rem}
+.hero-buttons{display:flex;gap:13px;flex-wrap:wrap}
+.hero-meta{display:flex;gap:24px;margin-top:38px;flex-wrap:wrap}
+.meta-item{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.75rem}
+.meta-icon{color:var(--purple);font-size:1rem}
+/* Animated Z */
+.hero-visual{
+  position:relative;min-height:460px;display:grid;place-items:center;
+  perspective:1000px;
+}
+.orb{
+  position:absolute;width:min(100%,440px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,rgba(113,60,255,.17),rgba(91,48,180,.04) 48%,transparent 70%);
+  filter:blur(2px);animation:orbPulse 6s ease-in-out infinite;
+}
+.z-stage{
+  width:330px;height:330px;position:relative;display:grid;place-items:center;
+  transform-style:preserve-3d;animation:float 6s ease-in-out infinite;
+}
+.z-ring{
+  position:absolute;border-radius:50%;border:1px solid rgba(164,112,255,.23);
+  width:100%;height:100%;transform:rotateX(68deg);
+  box-shadow:0 0 24px rgba(143,83,255,.06);
+}
+.z-ring.r2{width:83%;height:83%;transform:rotateY(65deg) rotateX(18deg);border-color:rgba(101,230,255,.2)}
+.z-ring.r3{width:115%;height:115%;transform:rotateX(75deg);border-style:dashed;animation:spin 24s linear infinite}
+.z-ring.r4{width:70%;height:70%;transform:rotateY(65deg) rotateX(30deg);animation:spinReverse 18s linear infinite}
+.z-core{
+  position:relative;width:205px;height:235px;display:grid;place-items:center;
+  clip-path:polygon(18% 0,100% 0,82% 19%,38% 19%,66% 39%,20% 81%,62% 81%,43% 100%,0 100%,42% 56%,0 27%,18% 27%,46% 43%,68% 19%,18% 19%);
+  background:linear-gradient(135deg,#f8f2ff 0%,#c7a2ff 17%,#6f35dc 48%,#281244 72%,#d4c0ff 100%);
+  filter:drop-shadow(0 0 28px rgba(155,92,255,.6));
+  animation:zGlow 4s ease-in-out infinite;
+}
+.z-core::after{
+  content:"";position:absolute;inset:2px;
+  background:linear-gradient(140deg,rgba(255,255,255,.55),transparent 30%,rgba(0,0,0,.45) 85%);
+  clip-path:inherit;
+}
+.z-orbit-dot{
+  position:absolute;width:9px;height:9px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 18px var(--cyan);
+  top:14%;right:15%;animation:dotFloat 4s ease-in-out infinite;
+}
+.z-label{
+  position:absolute;bottom:4%;font-family:Orbitron,sans-serif;
+  font-size:.7rem;letter-spacing:5px;color:#bba2ed;
+}
+.hero-glow{
+  position:absolute;width:140px;height:140px;border-radius:50%;
+  background:var(--purple);filter:blur(100px);opacity:.2;
+}
+.scroll-cue{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  color:#827b90;font-size:.65rem;letter-spacing:3px;
+  display:flex;align-items:center;gap:12px;
+}
+.scroll-cue::after{content:"";height:32px;width:1px;background:linear-gradient(var(--purple),transparent)}
+/* Stats */
+.stats-strip{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(255,255,255,.012)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:30px 15px;text-align:center;border-right:1px solid var(--border)}
+.stat:last-child{border:0}
+.stat-number{font-family:Orbitron,sans-serif;font-size:1.75rem;font-weight:800}
+.stat-label{font-size:.7rem;color:var(--muted);margin-top:6px}
+/* Cards */
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .card{
-  width:100%;max-width:680px;padding:2.4rem 2rem;border-radius:22px;text-align:center;
-  background:var(--glass);border:1px solid var(--line);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  position:relative;overflow:hidden;padding:27px;
+  border:1px solid var(--border);border-radius:18px;
+  background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
+  transition:transform .3s,border-color .3s,background .3s;
+  transform-style:preserve-3d;
 }
-.card h2,.end h2{font-size:clamp(1.5rem,4vw,2rem);font-weight:700;line-height:1.4;margin-bottom:.8rem}
-.card p,.end p{color:var(--muted);font-size:1.06rem}
-.divider{height:2px;width:0;margin:0 auto 1.4rem;background:var(--grad);border-radius:2px;transition:width 1.2s var(--ease) .3s}
-.in .divider,.divider.in{width:72px}
-.end{min-height:60svh;display:grid;place-items:center;text-align:center;padding-bottom:6rem}
-
-/* ========== Scroll reveal (fade + slide up) and language fade ========== */
-[data-i18n]{transition:opacity .5s}
-.reveal{
-  opacity:0;transform:translateY(30px);
-  transition:opacity .9s var(--ease) var(--d,0s),transform .9s var(--ease) var(--d,0s);
+.card::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 0,rgba(145,83,255,.14),transparent 70%);
+  transition:opacity .3s;
 }
-.reveal.in{opacity:1;transform:none}
-body.fading [data-i18n]{opacity:0!important;transition:opacity .3s}  /* fade out while text swaps */
-body.fading .tagline{opacity:0;transition:opacity .3s}
-.tagline{transition:opacity .4s}
-
-/* ========== Small screens ========== */
-@media (max-width:600px){
-  .card{padding:1.8rem 1.25rem}
-  .lang{top:.7rem;right:.7rem;padding:.4rem .9rem}
-  .block{padding-top:3.5rem;padding-bottom:3.5rem}
+.card:hover{border-color:rgba(165,111,255,.48);background-color:rgba(255,255,255,.035)}
+.card:hover::before{opacity:1}
+.card>*{position:relative}
+.card-icon{
+  width:49px;height:49px;display:grid;place-items:center;
+  border:1px solid rgba(159,103,255,.28);border-radius:14px;
+  color:#c8a7ff;background:rgba(123,62,232,.11);
+  font-size:1.35rem;margin-bottom:24px;
 }
-
-/* ========== Reduced motion: effectively disable animation ========== */
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{
-    animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;
-    transition-duration:.01ms!important;transition-delay:0s!important;
+.card h3{font-size:1.12rem;margin-bottom:10px}
+.card p{font-size:.84rem;color:var(--muted)}
+.card-link{
+  display:inline-flex;align-items:center;gap:8px;margin-top:22px;
+  color:#c9a8ff;font-size:.76rem;font-weight:800;
+}
+.card-link span{transition:transform .2s}
+.card-link:hover span{transform:translateX(5px)}
+/* About */
+.about-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:70px;align-items:center}
+.about-visual{
+  position:relative;min-height:380px;display:grid;place-items:center;
+  border:1px solid var(--border);border-radius:24px;overflow:hidden;
+  background:radial-gradient(circle at 50% 40%,rgba(125,65,255,.17),transparent 60%),rgba(255,255,255,.015);
+}
+.about-visual::before,.about-visual::after{
+  content:"";position:absolute;width:270px;height:270px;border:1px solid rgba(161,104,255,.2);
+  border-radius:50%;animation:spin 30s linear infinite;
+}
+.about-visual::after{width:205px;height:205px;border-style:dashed;animation:spinReverse 22s linear infinite}
+.about-big-z{font-family:Orbitron,sans-serif;font-size:12rem;font-weight:900;line-height:1;color:transparent;
+  -webkit-text-stroke:2px rgba(191,153,255,.8);text-shadow:0 0 45px rgba(135,65,255,.3)}
+.about-tag{
+  position:absolute;bottom:25px;left:25px;right:25px;
+  display:flex;justify-content:space-between;gap:15px;
+  padding:14px 17px;border:1px solid var(--border);border-radius:12px;
+  background:rgba(8,7,13,.8);font-size:.7rem;
+}
+.about-copy h2{font-size:clamp(2rem,4vw,3.2rem);line-height:1.2;letter-spacing:-1px;margin:17px 0 20px}
+.about-copy p{color:var(--muted);font-size:.9rem;margin-bottom:17px}
+.feature-list{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:28px}
+.feature{display:flex;align-items:center;gap:10px;font-size:.8rem}
+.check{color:var(--cyan);font-size:1rem}
+/* Ecosystem */
+.ecosystem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.eco-item{
+  min-height:150px;padding:22px 18px;border-radius:15px;
+  border:1px solid var(--border);background:var(--panel);
+  transition:.25s;position:relative;overflow:hidden;
+}
+.eco-item:hover{transform:translateY(-5px);border-color:rgba(161,104,255,.5)}
+.eco-symbol{font-size:1.55rem;color:#c7a4ff;margin-bottom:15px}
+.eco-item h3{font-size:.88rem;margin-bottom:5px}
+.eco-item p{font-size:.73rem;color:var(--muted)}
+/* Projects */
+.project-card{display:flex;flex-direction:column;min-height:290px}
+.project-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.project-symbol{
+  width:48px;height:48px;border-radius:13px;display:grid;place-items:center;
+  background:rgba(131,71,255,.13);border:1px solid var(--border);font-size:1.4rem;
+}
+.project-tag{font-size:.63rem;color:var(--cyan);letter-spacing:1px;text-transform:uppercase}
+.project-card p{flex:1}
+.project-bottom{margin-top:20px;padding-top:15px;border-top:1px solid var(--border);font-size:.7rem;color:var(--muted)}
+/* Principles */
+.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.principle{padding:25px 0;border-top:1px solid var(--border)}
+.principle-num{font-family:Orbitron,sans-serif;color:#a77aff;font-size:.8rem}
+.principle h3{font-size:1.1rem;margin:17px 0 10px}
+.principle p{font-size:.84rem;color:var(--muted)}
+/* Roadmap */
+.roadmap{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.roadmap-item{padding:23px 18px;border:1px solid var(--border);border-radius:14px;background:var(--panel)}
+.roadmap-year{font-family:Orbitron,sans-serif;font-size:.7rem;color:var(--purple);letter-spacing:1px}
+.roadmap-item h3{font-size:.94rem;margin:12px 0 8px}
+.roadmap-item p{font-size:.77rem;color:var(--muted)}
+/* CTA */
+.cta-box{
+  position:relative;overflow:hidden;text-align:center;
+  border:1px solid rgba(157,102,255,.3);border-radius:25px;
+  padding:75px 25px;
+  background:radial-gradient(ellipse at 50% 0,rgba(124,60,255,.2),transparent 65%),rgba(255,255,255,.02);
+}
+.cta-box::before,.cta-box::after{
+  content:"";position:absolute;width:220px;height:220px;border:1px solid rgba(163,113,255,.14);
+  border-radius:50%;top:50%;transform:translateY(-50%);
+}
+.cta-box::before{left:-130px}
+.cta-box::after{right:-130px}
+.cta-box h2{font-size:clamp(2rem,5vw,3.4rem);line-height:1.15;margin:18px auto;max-width:720px}
+.cta-box p{max-width:560px;margin:0 auto 27px;color:var(--muted);font-size:.9rem}
+.cta-buttons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+/* Contact */
+.contact-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:45px}
+.contact-info h3{font-size:1.4rem;margin:15px 0}
+.contact-info>p{font-size:.87rem;color:var(--muted);margin-bottom:28px}
+.contact-detail{
+  display:flex;align-items:center;gap:14px;padding:16px 0;
+  border-bottom:1px solid var(--border);
+}
+.contact-detail .icon{
+  width:42px;height:42px;display:grid;place-items:center;
+  border:1px solid var(--border);border-radius:12px;color:var(--purple);
+}
+.contact-detail small{display:block;color:var(--muted);font-size:.68rem}
+.contact-detail a,.contact-detail strong{font-size:.83rem;overflow-wrap:anywhere}
+.contact-form{
+  padding:28px;border:1px solid var(--border);border-radius:18px;
+  background:rgba(255,255,255,.025);
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{margin-bottom:17px}
+.form-group label{display:block;font-size:.76rem;margin-bottom:8px;color:#d5ccdf}
+.form-group input,.form-group textarea,.form-group select{
+  width:100%;padding:13px 14px;color:var(--text);
+  background:rgba(0,0,0,.2);border:1px solid var(--border);
+  border-radius:10px;outline:none;transition:border-color .2s;
+}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--purple)}
+.form-group textarea{min-height:125px;resize:vertical}
+.form-group select option{background:#100d19}
+.form-note{font-size:.68rem;color:var(--muted);margin-top:13px}
+/* Footer */
+footer{border-top:1px solid var(--border);padding:35px 0}
+.footer-main{display:flex;align-items:center;justify-content:space-between;gap:25px;flex-wrap:wrap}
+.footer-copy{font-size:.72rem;color:var(--muted);margin-top:9px}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap}
+.footer-links a{font-size:.75rem;color:var(--muted);transition:color .2s}
+.footer-links a:hover{color:#fff}
+.footer-bottom{
+  display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  padding-top:22px;margin-top:25px;border-top:1px solid var(--border);
+  font-size:.67rem;color:#716b7d;
+}
+/* Effects */
+#particles{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+.reveal{opacity:0;transform:translateY(25px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.back-top{
+  position:fixed;bottom:23px;right:22px;width:43px;height:43px;
+  border-radius:13px;border:1px solid var(--border);background:rgba(20,14,34,.9);
+  color:white;cursor:pointer;opacity:0;visibility:hidden;transition:.25s;z-index:90;
+}
+.back-top.show{opacity:1;visibility:visible}
+.back-top:hover{border-color:var(--purple);transform:translateY(-3px)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes float{0%,100%{transform:translateY(0) rotateY(-5deg)}50%{transform:translateY(-16px) rotateY(5deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinReverse{to{transform:rotate(-360deg)}}
+@keyframes orbPulse{0%,100%{transform:scale(.92);opacity:.7}50%{transform:scale(1.08);opacity:1}}
+@keyframes zGlow{0%,100%{filter:drop-shadow(0 0 20px rgba(155,92,255,.4))}50%{filter:drop-shadow(0 0 42px rgba(155,92,255,.8))}}
+@keyframes dotFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(-14px,10px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* RTL */
+html[dir="rtl"] body{font-family:Tahoma,Arial,sans-serif}
+html[dir="rtl"] .hero h1{letter-spacing:0}
+html[dir="rtl"] .eyebrow{letter-spacing:0}
+html[dir="rtl"] .card-link:hover span{transform:translateX(-5px)}
+html[dir="rtl"] .scroll-cue{letter-spacing:0}
+html[dir="rtl"] .z-label{letter-spacing:0}
+html[dir="rtl"] .footer-bottom{direction:rtl}
+html[dir="rtl"] .contact-info{text-align:right}
+/* Responsive */
+@media(max-width:1000px){
+  .nav-links{gap:15px}
+  .nav-links a{font-size:.73rem}
+  .hero-grid{gap:10px}
+  .hero-visual{min-height:390px}
+  .z-stage{transform:scale(.85)}
+  .cards-grid{grid-template-columns:repeat(2,1fr)}
+  .ecosystem-grid{grid-template-columns:repeat(2,1fr)}
+  .roadmap{grid-template-columns:repeat(2,1fr)}
+  .about-grid{gap:35px}
+}
+@media(max-width:760px){
+  :root{--nav-height:68px}
+  .section{padding:80px 0}
+  .menu-btn{display:block}
+  .nav-links{
+    position:absolute;top:calc(var(--nav-height) - 1px);left:0;right:0;
+    padding:18px 5% 24px;background:rgba(8,7,13,.98);
+    border-bottom:1px solid var(--border);
+    display:flex;flex-direction:column;align-items:stretch;gap:0;
+    opacity:0;visibility:hidden;transform:translateY(-8px);transition:.25s;
   }
-  .tagline::after{animation:none}
+  .nav-links.open{opacity:1;visibility:visible;transform:translateY(0)}
+  .nav-links a{padding:12px 0;font-size:.9rem;border-bottom:1px solid rgba(255,255,255,.045)}
+  .nav-links a::after{display:none}
+  .hero{padding-top:120px;min-height:auto;padding-bottom:90px}
+  .hero-grid{grid-template-columns:1fr;text-align:center}
+  .hero-content{display:flex;flex-direction:column;align-items:center}
+  .hero h1{font-size:clamp(3rem,12vw,5rem);letter-spacing:-3px}
+  .hero-description{font-size:.9rem}
+  .hero-buttons{justify-content:center}
+  .hero-meta{justify-content:center}
+  .hero-visual{min-height:350px;margin-top:5px}
+  .z-stage{transform:scale(.78)}
+  .scroll-cue{display:none}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(2){border-right:0}
+  .stat:nth-child(-n+2){border-bottom:1px solid var(--border)}
+  .about-grid,.contact-grid{grid-template-columns:1fr}
+  .about-visual{min-height:310px}
+  .about-big-z{font-size:10rem}
+  .principles{grid-template-columns:1fr;gap:8px}
+  .principle{padding:20px 0}
+  .section-head{margin-bottom:35px}
+}
+@media(max-width:480px){
+  .container{width:91%}
+  .logo-name{font-size:.9rem}
+  .logo-mark{width:35px;height:35px}
+  .nav-actions{gap:7px}
+  .hero h1{letter-spacing:-2px}
+  .hero-visual{min-height:300px}
+  .z-stage{transform:scale(.65)}
+  .cards-grid,.ecosystem-grid,.roadmap{grid-template-columns:1fr}
+  .card{padding:23px}
+  .eco-item{min-height:125px}
+  .feature-list{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr;gap:0}
+  .contact-form{padding:20px}
+  .cta-box{padding:55px 20px}
+  .footer-main{align-items:flex-start;flex-direction:column}
+  .footer-bottom{flex-direction:column}
+  .stat-number{font-size:1.4rem}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;animation-iteration-count:1!important;
+    scroll-behavior:auto!important;transition-duration:.01ms!important;
+  }
+  .reveal{opacity:1;transform:none}
 }
 </style>
 </head>
 
 <body>
-<!-- Animated background -->
-<div class="stage" aria-hidden="true">
-  <div class="bg"></div>
-  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
-  <canvas id="fx"></canvas>
-</div>
+<canvas id="particles" aria-hidden="true"></canvas>
 
-<button class="lang" id="langBtn" type="button"></button>
+<header class="navbar" id="navbar">
+  <div class="container nav-inner">
+    <a href="#home" class="logo" aria-label="ZYVORA home">
+      <div class="logo-mark">Z</div>
+      <div>
+        <div class="logo-name">ZYVORA</div>
+        <div class="logo-sub">TECHNOLOGY ECOSYSTEM</div>
+      </div>
+    </a>
+
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="#home" data-i18n="navHome">Home</a>
+      <a href="#about" data-i18n="navAbout">About</a>
+      <a href="#services" data-i18n="navServices">Services</a>
+      <a href="#ecosystem" data-i18n="navEcosystem">Ecosystem</a>
+      <a href="#projects" data-i18n="navProjects">Projects</a>
+      <a href="#contact" data-i18n="navContact">Contact</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="lang-btn" id="langToggle" type="button" aria-label="Change language">FA / EN</button>
+      <a href="#contact" class="btn btn-primary" style="min-height:39px;padding:9px 13px;font-size:.72rem" data-i18n="navCta">Let's Talk ↗</a>
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</header>
 
 <main>
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-in">
-      <span class="badge reveal" data-i18n="badge" style="--d:.1s"></span>
-      <h1 class="wordmark" id="wordmark" aria-label="Zyvora"></h1>
-      <p class="tagline" id="tagline" aria-live="polite"></p>
-      <p class="lead reveal" data-i18n="lead" style="--d:.5s"></p>
-      <button class="cta reveal" id="cta" type="button" data-i18n="cta" style="--d:.7s"></button>
-    </div>
-  </section>
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="container hero-grid">
+    <div class="hero-content">
+      <div class="status">
+        <span class="status-dot"></span>
+        <span data-i18n="status">INDEPENDENT TECHNOLOGY ECOSYSTEM</span>
+      </div>
 
-  <!-- Intro -->
-  <section class="block">
-    <div class="card reveal">
-      <div class="divider"></div>
-      <h2 data-i18n="aboutTitle"></h2>
-      <p data-i18n="aboutText"></p>
-    </div>
-  </section>
+      <h1>
+        <span class="gradient-text">BUILD.</span>
+        <span class="line2">CREATE.</span>
+        <span class="line2 gradient-text">INNOVATE.</span>
+      </h1>
 
-  <!-- End of page (target of the CTA) -->
-  <section class="end" id="end">
-    <div class="reveal">
-      <div class="divider"></div>
-      <h2 data-i18n="endTitle"></h2>
-      <p data-i18n="endText"></p>
+      <p class="hero-description" data-i18n="heroDesc">
+        We turn bold ideas into digital experiences. Explore software,
+        artificial intelligence, games and tools built for what comes next.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="#projects" class="btn btn-primary" data-i18n="exploreBtn">Explore Projects ↗</a>
+        <a href="#about" class="btn btn-outline" data-i18n="discoverBtn">Discover ZYVORA</a>
+      </div>
+
+      <div class="hero-meta">
+        <div class="meta-item"><span class="meta-icon">✳</span><span data-i18n="meta1">Innovation first</span></div>
+        <div class="meta-item"><span class="meta-icon">⌘</span><span data-i18n="meta2">Built with purpose</span></div>
+        <div class="meta-item"><span class="meta-icon">◇</span><span data-i18n="meta3">Always evolving</span></div>
+      </div>
     </div>
-  </section>
+
+    <div class="hero-visual" aria-label="Animated ZYVORA symbol">
+      <div class="orb"></div>
+      <div class="hero-glow"></div>
+      <div class="z-stage" id="zStage">
+        <div class="z-ring r3"></div>
+        <div class="z-ring r1"></div>
+        <div class="z-ring r2"></div>
+        <div class="z-ring r4"></div>
+        <div class="z-core"></div>
+        <div class="z-orbit-dot"></div>
+        <div class="z-label">Z Y V O R A</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue" data-i18n="scroll">SCROLL TO EXPLORE</div>
+</section>
+
+<!-- STATS -->
+<section class="stats-strip" aria-label="Our approach">
+  <div class="container stats-grid">
+    <div class="stat reveal">
+      <div class="stat-number gradient-text">01</div>
+      <div class="stat-label" data-i18n="stat1">One ecosystem</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-number gradient-text">∞</div>
+      <div class="stat-label" data-i18n="stat2">Ideas to explore</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-number gradient-text">24/7</div>
+      <div class="stat-label" data-i18n="stat3">Curiosity never sleeps</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-number gradient-text">100%</div>
+      <div class="stat-label" data-i18n="stat4">Built with ambition</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="container about-grid">
+    <div class="about-visual reveal">
+      <div class="about-big-z">Z</div>
+      <div class="about-tag">
+        <span>ZYVORA / CORE</span>
+        <span class="purple">BUILD. CREATE. INNOVATE.</span>
+      </div>
+    </div>
+
+    <div class="about-copy reveal">
+      <span class="eyebrow" data-i18n="aboutEyebrow">WHO WE ARE</span>
+      <h2 data-i18n="aboutTitle">Technology is more than code. <span class="gradient-text">It's possibility.</span></h2>
+      <p data-i18n="aboutP1">
+        ZYVORA is an independent technology ecosystem focused on exploring,
+        designing and developing digital products, software, AI-powered tools
+        and interactive experiences.
+      </p>
+      <p data-i18n="aboutP2">
+        Our goal is to bring ideas to life through thoughtful engineering,
+        creative problem-solving and continuous learning.
+      </p>
+
+      <div class="feature-list">
+        <div class="feature"><span class="check">✦</span><span data-i18n="feature1">Creative engineering</span></div>
+        <div class="feature"><span class="check">✦</span><span data-i18n="feature2">Practical innovation</span></div>
+        <div class="feature"><span class="check">✦</span><span data-i18n="feature3">Digital experiences</span></div>
+        <div class="feature"><span class="check">✦</span><span data-i18n="feature4">Continuous evolution</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" data-i18n="servicesEyebrow">WHAT WE DO</span>
+      <h2 class="section-title" data-i18n="servicesTitle">Ideas become <span class="gradient-text">digital reality.</span></h2>
+      <p class="section-desc" data-i18n="servicesDesc">
+        From a first prototype to a complete digital product, explore the
+        areas in which ZYVORA builds and experiments.
+      </p>
+    </div>
+
+    <div class="cards-grid">
+      <article class="card reveal">
+        <div class="card-icon">⌘</div>
+        <h3 data-i18n="service1Title">Software Development</h3>
+        <p data-i18n="service1Desc">Web applications, custom tools, automation and practical software solutions tailored to real needs.</p>
+        <a class="card-link" href="#contact"><span data-i18n="learnMore">Discuss a project</span> <span>↗</span></a>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-icon">◈</div>
+        <h3 data-i18n="service2Title">Artificial Intelligence</h3>
+        <p data-i18n="service2Desc">AI assistants, multi-model workflows and intelligent features that help people work and create.</p>
+        <a class="card-link" href="#projects"><span data-i18n="viewProjects">Explore projects</span> <span>↗</span></a>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-icon">⌬</div>
+        <h3 data-i18n="service3Title">Game Development</h3>
+        <p data-i18n="service3Desc">Interactive worlds, original concepts, gameplay systems and experimental game experiences.</p>
+        <a class="card-link" href="#projects"><span data-i18n="viewProjects">Explore projects</span> <span>↗</span></a>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-icon">⟁</div>
+        <h3 data-i18n="service4Title">Servers & Infrastructure</h3>
+        <p data-i18n="service4Desc">Deployment experiments, hosting solutions, automation and infrastructure tools for digital services.</p>
+        <a class="card-link" href="#contact"><span data-i18n="learnMore">Discuss a project</span> <span>↗</span></a>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-icon">⌘</div>
+        <h3 data-i18n="service5Title">Developer Tools</h3>
+        <p data-i18n="service5Desc">Utilities and workflows designed to make programming, testing and building more accessible.</p>
+        <a class="card-link" href="#ecosystem"><span data-i18n="exploreAreas">Explore our areas</span> <span>↗</span></a>
+      </article>
+
+      <article class="card reveal">
+        <div class="card-icon">◇</div>
+        <h3 data-i18n="service6Title">Digital Products</h3>
+        <p data-i18n="service6Desc">Digital resources, educational projects and products developed around useful ideas.</p>
+        <a class="card-link" href="#contact"><span data-i18n="learnMore">Discuss a project</span> <span>↗</span></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM -->
+<section class="section" id="ecosystem">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" data-i18n="ecoEyebrow">THE ECOSYSTEM</span>
+      <h2 class="section-title" data-i18n="ecoTitle">One vision. <span class="gradient-text">Multiple frontiers.</span></h2>
+      <p class="section-desc" data-i18n="ecoDesc">
+        ZYVORA explores multiple fields of technology, connecting creativity,
+        engineering and learning under one evolving ecosystem.
+      </p>
+    </div>
+
+    <div class="ecosystem-grid">
+      <div class="eco-item reveal"><div class="eco-symbol">◈</div><h3 data-i18n="eco1">Artificial Intelligence</h3><p data-i18n="eco1d">Assistants and intelligent systems</p></div>
+      <div class="eco-item reveal"><div class="eco-symbol">⌘</div><h3 data-i18n="eco2">Software</h3><p data-i18n="eco2d">Applications and automation</p></div>
+      <div class="eco-item reveal"><div class="eco-symbol">▣</div><h3 data-i18n="eco3">Game Development</h3><p data-i18n="eco3d">Worlds, mechanics and stories</p></div>
+      <div class="eco-item reveal"><div class="eco-symbol">⌬</div><h3 data-i18n="eco4">Servers & Hosting</h3><p data-i18n="eco4d">Infrastructure and deployment</p></div>
+      <div class="eco-item reveal"><div class="eco-symbol">⌁</div><h3 data-i18n="eco5">Developer Tools</h3><p data-i18n="eco5d">Tools for builders</p></div>
+      <div class="eco-item reveal"><div class="eco-symbol">⟁</div><h3 data-i18n="eco6">Electronics</h3><p data-i18n="eco6d">Hardware and experimentation</p></div>
+      <div class="eco-item reveal"><div class="eco-symbol">▤</div><h3 data-i18n="eco7">Education</h3><p data-i18n="eco7d">Knowledge and skill development</p></div>
+      <div class="eco-item reveal"><div class="eco-symbol">✳</div><h3 data-i18n="eco8">Digital Products</h3><p data-i18n="eco8d">Resources and new experiences</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="section" id="projects">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" data-i18n="projectsEyebrow">SELECTED INITIATIVES</span>
+      <h2 class="section-title" data-i18n="projectsTitle">Built from <span class="gradient-text">bold ideas.</span></h2>
+      <p class="section-desc" data-i18n="projectsDesc">
+        A look at selected projects in the ZYVORA ecosystem. Availability
+        and development status may vary as projects evolve.
+      </p>
+    </div>
+
+    <div class="cards-grid">
+      <article class="card project-card reveal">
+        <div class="project-top"><div class="project-symbol">◈</div><span class="project-tag">AI / ASSISTANT</span></div>
+        <h3>Zyvora AI</h3>
+        <p data-i18n="project1Desc">An AI assistant concept focused on accessible conversations, useful tools and multi-model experimentation.</p>
+        <div class="project-bottom" data-i18n="projectStatus">Independent project · In development</div>
+      </article>
+
+      <article class="card project-card reveal">
+        <div class="project-top"><div class="project-symbol">▣</div><span class="project-tag">GAME / SURVIVAL</span></div>
+        <h3>Seven Days After The Fall</h3>
+        <p data-i18n="project2Desc">A story-driven survival adventure set in a world shaped by collapse, mystery and difficult choices.</p>
+        <div class="project-bottom" data-i18n="projectStatus">Independent project · In development</div>
+      </article>
+
+      <article class="card project-card reveal">
+        <div class="project-top"><div class="project-symbol">⌬</div><span class="project-tag">AI / AGENT</span></div>
+        <h3>JAF AI</h3>
+        <p data-i18n="project3Desc">A personal AI assistant concept inspired by futuristic digital assistants and multi-model intelligence.</p>
+        <div class="project-bottom" data-i18n="projectStatus">Independent project · In development</div>
+      </article>
+
+      <article class="card project-card reveal">
+        <div class="project-top"><div class="project-symbol">⟁</div><span class="project-tag">GAME / RACING</span></div>
+        <h3>Formula X</h3>
+        <p data-i18n="project4Desc">A racing game concept exploring vehicle design, driving mechanics and immersive gameplay.</p>
+        <div class="project-bottom" data-i18n="projectStatus">Independent project · In development</div>
+      </article>
+
+      <article class="card project-card reveal">
+        <div class="project-top"><div class="project-symbol">⌘</div><span class="project-tag">TOOLS / AUTOMATION</span></div>
+        <h3>Zyvora Bot Factory</h3>
+        <p data-i18n="project5Desc">A project concept for creating and managing Telegram bots through a more accessible workflow.</p>
+        <div class="project-bottom" data-i18n="projectStatus">Independent project · In development</div>
+      </article>
+
+      <article class="card project-card reveal">
+        <div class="project-top"><div class="project-symbol">✳</div><span class="project-tag">EXPERIMENTAL</span></div>
+        <h3>Zyvora Search</h3>
+        <p data-i18n="project6Desc">An experimental search project exploring ways to discover and organize information on the web.</p>
+        <div class="project-bottom" data-i18n="projectStatus">Independent project · In development</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPLES -->
+<section class="section" id="principles">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" data-i18n="principlesEyebrow">HOW WE THINK</span>
+      <h2 class="section-title" data-i18n="principlesTitle">The principles behind <span class="gradient-text">the work.</span></h2>
+    </div>
+
+    <div class="principles">
+      <article class="principle reveal">
+        <div class="principle-num">01 / BUILD</div>
+        <h3 data-i18n="principle1Title">Make ideas tangible</h3>
+        <p data-i18n="principle1Desc">Turn concepts into working prototypes, learn through implementation and improve through iteration.</p>
+      </article>
+      <article class="principle reveal">
+        <div class="principle-num">02 / CREATE</div>
+        <h3 data-i18n="principle2Title">Design with intention</h3>
+        <p data-i18n="principle2Desc">Create useful, thoughtful experiences where visual design supports function and usability.</p>
+      </article>
+      <article class="principle reveal">
+        <div class="principle-num">03 / INNOVATE</div>
+        <h3 data-i18n="principle3Title">Keep moving forward</h3>
+        <p data-i18n="principle3Desc">Experiment, question assumptions, evaluate results and keep improving what we build.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="section" id="roadmap">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" data-i18n="roadmapEyebrow">THE JOURNEY</span>
+      <h2 class="section-title" data-i18n="roadmapTitle">A vision in <span class="gradient-text">continuous progress.</span></h2>
+      <p class="section-desc" data-i18n="roadmapDesc">The ecosystem grows through experimentation, building, testing and learning.</p>
+    </div>
+
+    <div class="roadmap">
+      <article class="roadmap-item reveal">
+        <div class="roadmap-year">PHASE / 01</div>
+        <h3 data-i18n="phase1Title">Explore & Learn</h3>
+        <p data-i18n="phase1Desc">Research ideas, explore technologies and define useful product concepts.</p>
+      </article>
+      <article class="roadmap-item reveal">
+        <div class="roadmap-year">PHASE / 02</div>
+        <h3 data-i18n="phase2Title">Build & Prototype</h3>
+        <p data-i18n="phase2Desc">Develop early versions, test concepts and validate core functionality.</p>
+      </article>
+      <article class="roadmap-item reveal">
+        <div class="roadmap-year">PHASE / 03</div>
+        <h3 data-i18n="phase3Title">Refine & Improve</h3>
+        <p data-i18n="phase3Desc">Improve usability, reliability, performance and the overall experience.</p>
+      </article>
+      <article class="roadmap-item reveal">
+        <div class="roadmap-year">PHASE / 04</div>
+        <h3 data-i18n="phase4Title">Release & Grow</h3>
+        <p data-i18n="phase4Desc">Publish ready products, gather feedback and continue evolving.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section">
+  <div class="container">
+    <div class="cta-box reveal">
+      <span class="eyebrow" data-i18n="ctaEyebrow">HAVE AN IDEA?</span>
+      <h2 data-i18n="ctaTitle">Let's build <span class="gradient-text">what comes next.</span></h2>
+      <p data-i18n="ctaDesc">Have a project, a collaboration idea or a question? Start a conversation with ZYVORA.</p>
+      <div class="cta-buttons">
+        <a class="btn btn-primary" href="#contact" data-i18n="ctaButton">Start a Conversation ↗</a>
+        <a class="btn btn-outline" href="mailto:zyvoraoffical0@gmail.com?subject=ZYVORA%20Inquiry" data-i18n="emailButton">Email ZYVORA</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow" data-i18n="contactEyebrow">GET IN TOUCH</span>
+      <h2 class="section-title" data-i18n="contactTitle">Your next idea starts <span class="gradient-text">here.</span></h2>
+      <p class="section-desc" data-i18n="contactDesc">Tell us what you're planning, what you need or what you'd like to explore together.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <h3 data-i18n="contactHeading">Contact ZYVORA</h3>
+        <p data-i18n="contactText">For project inquiries, collaboration proposals and general questions, use the official contact details below.</p>
+
+        <div class="contact-detail">
+          <div class="icon">✉</div>
+          <div>
+            <small data-i18n="emailLabel">OFFICIAL EMAIL</small>
+            <a href="mailto:zyvoraoffical0@gmail.com">zyvoraoffical0@gmail.com</a>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="icon">◈</div>
+          <div>
+            <small data-i18n="brandLabel">BRAND</small>
+            <strong>ZYVORA | Technology Ecosystem</strong>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="icon">↗</div>
+          <div>
+            <small data-i18n="websiteLabel">WEBSITE</small>
+            <a href="https://zyvora-z.ir" target="_blank" rel="noopener noreferrer">zyvora-z.ir</a>
+          </div>
+        </div>
+      </div>
+
+      <form class="contact-form reveal" id="contactForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name" data-i18n="nameLabel">Your name</label>
+            <input id="name" name="name" type="text" autocomplete="name" maxlength="100" required placeholder="John Doe">
+          </div>
+          <div class="form-group">
+            <label for="email" data-i18n="yourEmailLabel">Your email</label>
+            <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required placeholder="you@example.com">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="subject" data-i18n="subjectLabel">What is this about?</label>
+          <select id="subject" name="subject" required>
+            <option value="" data-i18n="selectOption">Select a topic</option>
+            <option value="Software Development">Software Development</option>
+            <option value="Artificial Intelligence">Artificial Intelligence</option>
+            <option value="Game Development">Game Development</option>
+            <option value="Collaboration">Collaboration</option>
+            <option value="General Inquiry">General Inquiry</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="message" data-i18n="messageLabel">Your message</label>
+          <textarea id="message" name="message" maxlength="5000" required placeholder="Tell us about your idea..."></textarea>
+        </div>
+
+        <button class="btn btn-primary" type="submit" style="width:100%" data-i18n="sendButton">Prepare Email ↗</button>
+        <p class="form-note" data-i18n="formNote">This form opens your email application with your message prepared. It does not send anything automatically.</p>
+      </form>
+    </div>
+  </div>
+</section>
 </main>
 
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-main">
+      <div>
+        <a href="#home" class="logo">
+          <div class="logo-mark">Z</div>
+          <div>
+            <div class="logo-name">ZYVORA</div>
+            <div class="logo-sub">TECHNOLOGY ECOSYSTEM</div>
+          </div>
+        </a>
+        <p class="footer-copy" data-i18n="footerTagline">Build. Create. Innovate.</p>
+      </div>
+
+      <div class="footer-links">
+        <a href="#about" data-i18n="navAbout">About</a>
+        <a href="#services" data-i18n="navServices">Services</a>
+        <a href="#projects" data-i18n="navProjects">Projects</a>
+        <a href="mailto:zyvoraoffical0@gmail.com">Email</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> ZYVORA. <span data-i18n="copyright">All rights reserved.</span></span>
+      <span data-i18n="footerNote">An independent technology ecosystem.</span>
+    </div>
+  </div>
+</footer>
+
+<button class="back-top" id="backTop" type="button" aria-label="Back to top">↑</button>
+
 <script>
-/* ========== All text, keyed by language ========== */
-const T = {
-  fa: {
-    title: 'Zyvora | معرفی',
-    toggle: 'English',
-    toggleAria: 'تغییر زبان به انگلیسی',
-    badge: 'صفحهٔ تست',
-    tagline: 'معرفی Zyvora',
-    lead: 'Zyvora یک برند تازه است که ایده‌های بزرگ را ساده، سریع و زیبا به زندگی می‌آورد. این صفحه فقط یک نمونهٔ آزمایشی است.',
-    cta: 'بیشتر بدانید',
-    aboutTitle: 'دربارهٔ Zyvora',
-    aboutText: 'این یک متن نمونه است. Zyvora با طراحی تمیز، حرکت روان و توجه به جزئیات ساخته می‌شود تا تجربه‌ای هم دیدنی و هم ماندگار بسازد.',
-    endTitle: 'پایان صفحهٔ آزمایشی',
-    endText: 'ممنون که این نسخهٔ آزمایشی را دیدید.'
-  },
+"use strict";
+
+/* ================================
+   ZYVORA WEBSITE SCRIPT
+   ================================ */
+
+const EMAIL = "zyvoraoffical0@gmail.com";
+
+const translations = {
   en: {
-    title: 'Zyvora | Introducing',
-    toggle: 'فارسی',
-    toggleAria: 'Switch language to Persian',
-    badge: 'Test page',
-    tagline: 'Introducing Zyvora',
-    lead: 'Zyvora is a fresh brand that brings big ideas to life: simple, fast and beautiful. This page is only a test sample.',
-    cta: 'Learn more',
-    aboutTitle: 'About Zyvora',
-    aboutText: 'This is placeholder text. Zyvora is shaped by clean design, smooth motion and attention to detail, aiming for an experience that is both striking and lasting.',
-    endTitle: 'End of the test page',
-    endText: 'Thanks for checking out this test version.'
+    navHome:"Home",navAbout:"About",navServices:"Services",
+    navEcosystem:"Ecosystem",navProjects:"Projects",navContact:"Contact",
+    navCta:"Let's Talk ↗",
+    status:"INDEPENDENT TECHNOLOGY ECOSYSTEM",
+    heroDesc:"We turn bold ideas into digital experiences. Explore software, artificial intelligence, games and tools built for what comes next.",
+    exploreBtn:"Explore Projects ↗",discoverBtn:"Discover ZYVORA",
+    meta1:"Innovation first",meta2:"Built with purpose",meta3:"Always evolving",
+    scroll:"SCROLL TO EXPLORE",
+    stat1:"One ecosystem",stat2:"Ideas to explore",
+    stat3:"Curiosity never sleeps",stat4:"Built with ambition",
+    aboutEyebrow:"WHO WE ARE",
+    aboutTitle:'Technology is more than code. <span class="gradient-text">It\'s possibility.</span>',
+    aboutP1:"ZYVORA is an independent technology ecosystem focused on exploring, designing and developing digital products, software, AI-powered tools and interactive experiences.",
+    aboutP2:"Our goal is to bring ideas to life through thoughtful engineering, creative problem-solving and continuous learning.",
+    feature1:"Creative engineering",feature2:"Practical innovation",
+    feature3:"Digital experiences",feature4:"Continuous evolution",
+    servicesEyebrow:"WHAT WE DO",
+    servicesTitle:'Ideas become <span class="gradient-text">digital reality.</span>',
+    servicesDesc:"From a first prototype to a complete digital product, explore the areas in which ZYVORA builds and experiments.",
+    service1Title:"Software Development",
+    service1Desc:"Web applications, custom tools, automation and practical software solutions tailored to real needs.",
+    service2Title:"Artificial Intelligence",
+    service2Desc:"AI assistants, multi-model workflows and intelligent features that help people work and create.",
+    service3Title:"Game Development",
+    service3Desc:"Interactive worlds, original concepts, gameplay systems and experimental game experiences.",
+    service4Title:"Servers & Infrastructure",
+    service4Desc:"Deployment experiments, hosting solutions, automation and infrastructure tools for digital services.",
+    service5Title:"Developer Tools",
+    service5Desc:"Utilities and workflows designed to make programming, testing and building more accessible.",
+    service6Title:"Digital Products",
+    service6Desc:"Digital resources, educational projects and products developed around useful ideas.",
+    learnMore:"Discuss a project",viewProjects:"Explore projects",exploreAreas:"Explore our areas",
+    ecoEyebrow:"THE ECOSYSTEM",
+    ecoTitle:'One vision. <span class="gradient-text">Multiple frontiers.</span>',
+    ecoDesc:"ZYVORA explores multiple fields of technology, connecting creativity, engineering and learning under one evolving ecosystem.",
+    eco1:"Artificial Intelligence",eco1d:"Assistants and intelligent systems",
+    eco2:"Software",eco2d:"Applications and automation",
+    eco3:"Game Development",eco3d:"Worlds, mechanics and stories",
+    eco4:"Servers & Hosting",eco4d:"Infrastructure and deployment",
+    eco5:"Developer Tools",eco5d:"Tools for builders",
+    eco6:"Electronics",eco6d:"Hardware and experimentation",
+    eco7:"Education",eco7d:"Knowledge and skill development",
+    eco8:"Digital Products",eco8d:"Resources and new experiences",
+    projectsEyebrow:"SELECTED INITIATIVES",
+    projectsTitle:'Built from <span class="gradient-text">bold ideas.</span>',
+    projectsDesc:"A look at selected projects in the ZYVORA ecosystem. Availability and development status may vary as projects evolve.",
+    project1Desc:"An AI assistant concept focused on accessible conversations, useful tools and multi-model experimentation.",
+    project2Desc:"A story-driven survival adventure set in a world shaped by collapse, mystery and difficult choices.",
+    project3Desc:"A personal AI assistant concept inspired by futuristic digital assistants and multi-model intelligence.",
+    project4Desc:"A racing game concept exploring vehicle design, driving mechanics and immersive gameplay.",
+    project5Desc:"A project concept for creating and managing Telegram bots through a more accessible workflow.",
+    project6Desc:"An experimental search project exploring ways to discover and organize information on the web.",
+    projectStatus:"Independent project · In development",
+    principlesEyebrow:"HOW WE THINK",
+    principlesTitle:'The principles behind <span class="gradient-text">the work.</span>',
+    principle1Title:"Make ideas tangible",
+    principle1Desc:"Turn concepts into working prototypes, learn through implementation and improve through iteration.",
+    principle2Title:"Design with intention",
+    principle2Desc:"Create useful, thoughtful experiences where visual design supports function and usability.",
+    principle3Title:"Keep moving forward",
+    principle3Desc:"Experiment, question assumptions, evaluate results and keep improving what we build.",
+    roadmapEyebrow:"THE JOURNEY",
+    roadmapTitle:'A vision in <span class="gradient-text">continuous progress.</span>',
+    roadmapDesc:"The ecosystem grows through experimentation, building, testing and learning.",
+    phase1Title:"Explore & Learn",
+    phase1Desc:"Research ideas, explore technologies and define useful product concepts.",
+    phase2Title:"Build & Prototype",
+    phase2Desc:"Develop early versions, test concepts and validate core functionality.",
+    phase3Title:"Refine & Improve",
+    phase3Desc:"Improve usability, reliability, performance and the overall experience.",
+    phase4Title:"Release & Grow",
+    phase4Desc:"Publish ready products, gather feedback and continue evolving.",
+    ctaEyebrow:"HAVE AN IDEA?",
+    ctaTitle:'Let\'s build <span class="gradient-text">what comes next.</span>',
+    ctaDesc:"Have a project, a collaboration idea or a question? Start a conversation with ZYVORA.",
+    ctaButton:"Start a Conversation ↗",emailButton:"Email ZYVORA",
+    contactEyebrow:"GET IN TOUCH",
+    contactTitle:'Your next idea starts <span class="gradient-text">here.</span>',
+    contactDesc:"Tell us what you're planning, what you need or what you'd like to explore together.",
+    contactHeading:"Contact ZYVORA",
+    contactText:"For project inquiries, collaboration proposals and general questions, use the official contact details below.",
+    emailLabel:"OFFICIAL EMAIL",brandLabel:"BRAND",websiteLabel:"WEBSITE",
+    nameLabel:"Your name",yourEmailLabel:"Your email",
+    subjectLabel:"What is this about?",selectOption:"Select a topic",
+    messageLabel:"Your message",sendButton:"Prepare Email ↗",
+    formNote:"This form opens your email application with your message prepared. It does not send anything automatically.",
+    footerTagline:"Build. Create. Innovate.",
+    copyright:"All rights reserved.",
+    footerNote:"An independent technology ecosystem."
+  },
+
+  fa: {
+    navHome:"خانه",navAbout:"درباره ما",navServices:"خدمات",
+    navEcosystem:"اکوسیستم",navProjects:"پروژه‌ها",navContact:"ارتباط",
+    navCta:"ارتباط با ما ↗",
+    status:"اکوسیستم مستقل فناوری",
+    heroDesc:"ایده‌های بزرگ را به تجربه‌های دیجیتال تبدیل می‌کنیم. نرم‌افزار، هوش مصنوعی، بازی و ابزارهایی برای آینده را کشف کنید.",
+    exploreBtn:"مشاهده پروژه‌ها ↗",discoverBtn:"آشنایی با ZYVORA",
+    meta1:"نوآوری در اولویت",meta2:"ساخت هدفمند",meta3:"همیشه در حال پیشرفت",
+    scroll:"برای کشف بیشتر اسکرول کنید",
+    stat1:"یک اکوسیستم",stat2:"ایده‌های بی‌پایان",
+    stat3:"کنجکاوی متوقف نمی‌شود",stat4:"ساخته‌شده با انگیزه",
+    aboutEyebrow:"ما که هستیم",
+    aboutTitle:'فناوری فراتر از کد است. <span class="gradient-text">فناوری یعنی امکان.</span>',
+    aboutP1:"ZYVORA یک اکوسیستم مستقل فناوری است که روی بررسی، طراحی و توسعه محصولات دیجیتال، نرم‌افزار، ابزارهای هوش مصنوعی و تجربه‌های تعاملی تمرکز دارد.",
+    aboutP2:"هدف ما تبدیل ایده‌ها به محصولات واقعی از طریق مهندسی دقیق، حل خلاقانه مسائل و یادگیری مداوم است.",
+    feature1:"مهندسی خلاقانه",feature2:"نوآوری کاربردی",
+    feature3:"تجربه‌های دیجیتال",feature4:"پیشرفت مداوم",
+    servicesEyebrow:"چه کار می‌کنیم",
+    servicesTitle:'ایده‌ها به <span class="gradient-text">واقعیت دیجیتال</span> تبدیل می‌شوند.',
+    servicesDesc:"از اولین نمونه اولیه تا یک محصول دیجیتال کامل، حوزه‌هایی را ببینید که ZYVORA در آن‌ها توسعه و آزمایش می‌کند.",
+    service1Title:"توسعه نرم‌افزار",
+    service1Desc:"طراحی وب‌اپلیکیشن، ابزارهای اختصاصی، خودکارسازی و راهکارهای نرم‌افزاری متناسب با نیاز واقعی.",
+    service2Title:"هوش مصنوعی",
+    service2Desc:"دستیارهای هوشمند، گردش کار چندمدلی و قابلیت‌هایی برای کمک به کار و خلاقیت.",
+    service3Title:"توسعه بازی",
+    service3Desc:"جهان‌های تعاملی، ایده‌های تازه، سیستم‌های گیم‌پلی و تجربه‌های آزمایشی بازی.",
+    service4Title:"سرور و زیرساخت",
+    service4Desc:"راهکارهای میزبانی، استقرار سرویس، خودکارسازی و ابزارهای زیرساختی.",
+    service5Title:"ابزارهای توسعه‌دهندگان",
+    service5Desc:"ابزارها و روش‌هایی برای ساده‌تر کردن برنامه‌نویسی، آزمایش و توسعه.",
+    service6Title:"محصولات دیجیتال",
+    service6Desc:"منابع دیجیتال، پروژه‌های آموزشی و محصولاتی بر پایه ایده‌های کاربردی.",
+    learnMore:"بررسی سفارش پروژه",viewProjects:"مشاهده پروژه‌ها",exploreAreas:"حوزه‌های فعالیت",
+    ecoEyebrow:"اکوسیستم ما",
+    ecoTitle:'یک چشم‌انداز، <span class="gradient-text">چندین مسیر.</span>',
+    ecoDesc:"ZYVORA حوزه‌های مختلف فناوری را در یک اکوسیستم در حال رشد به هم پیوند می‌دهد.",
+    eco1:"هوش مصنوعی",eco1d:"دستیارها و سیستم‌های هوشمند",
+    eco2:"نرم‌افزار",eco2d:"اپلیکیشن و خودکارسازی",
+    eco3:"توسعه بازی",eco3d:"جهان، مکانیک و داستان",
+    eco4:"سرور و میزبانی",eco4d:"زیرساخت و استقرار",
+    eco5:"ابزارهای توسعه",eco5d:"ابزارهایی برای سازندگان",
+    eco6:"الکترونیک",eco6d:"سخت‌افزار و آزمایش",
+    eco7:"آموزش",eco7d:"دانش و توسعه مهارت",
+    eco8:"محصولات دیجیتال",eco8d:"منابع و تجربه‌های تازه",
+    projectsEyebrow:"پروژه‌های منتخب",
+    projectsTitle:'ساخته‌شده از <span class="gradient-text">ایده‌های بزرگ.</span>',
+    projectsDesc:"نگاهی به پروژه‌های منتخب اکوسیستم ZYVORA. وضعیت توسعه و دسترسی به پروژه‌ها ممکن است تغییر کند.",
+    project1Desc:"ایده دستیار هوش مصنوعی با تمرکز بر گفت‌وگوی کاربردی، ابزارهای مفید و آزمایش مدل‌های مختلف.",
+    project2Desc:"یک ماجراجویی بقا و داستان‌محور در جهانی گرفتار فروپاشی، رازها و انتخاب‌های دشوار.",
+    project3Desc:"مفهوم دستیار شخصی هوش مصنوعی با الهام از دستیارهای آینده‌نگر و هوش چندمدلی.",
+    project4Desc:"ایده بازی مسابقه‌ای با تمرکز بر طراحی خودرو، مکانیک رانندگی و تجربه‌ای جذاب.",
+    project5Desc:"ایده‌ای برای ساخت و مدیریت ربات‌های تلگرام با فرایندی ساده‌تر.",
+    project6Desc:"پروژه‌ای آزمایشی برای کشف و سازمان‌دهی اطلاعات در وب.",
+    projectStatus:"پروژه مستقل · در حال توسعه",
+    principlesEyebrow:"طرز فکر ما",
+    principlesTitle:'اصولی که <span class="gradient-text">کار ما را شکل می‌دهند.</span>',
+    principle1Title:"تبدیل ایده به واقعیت",
+    principle1Desc:"ایده‌ها را به نمونه‌های قابل اجرا تبدیل می‌کنیم، با پیاده‌سازی یاد می‌گیریم و مرحله‌به‌مرحله بهتر می‌شویم.",
+    principle2Title:"طراحی هدفمند",
+    principle2Desc:"تجربه‌هایی کاربردی می‌سازیم که در آن‌ها طراحی ظاهری در خدمت عملکرد و استفاده آسان باشد.",
+    principle3Title:"حرکت رو به جلو",
+    principle3Desc:"آزمایش می‌کنیم، فرضیه‌ها را می‌سنجیم و محصولات خود را بهبود می‌دهیم.",
+    roadmapEyebrow:"مسیر پیشرفت",
+    roadmapTitle:'چشم‌اندازی در <span class="gradient-text">مسیر پیشرفت مداوم.</span>',
+    roadmapDesc:"اکوسیستم از طریق آزمایش، ساخت، بررسی و یادگیری رشد می‌کند.",
+    phase1Title:"بررسی و یادگیری",
+    phase1Desc:"تحقیق درباره ایده‌ها، بررسی فناوری‌ها و تعریف مفاهیم کاربردی.",
+    phase2Title:"ساخت نمونه اولیه",
+    phase2Desc:"توسعه نسخه‌های اولیه، آزمایش ایده‌ها و بررسی قابلیت‌های اصلی.",
+    phase3Title:"اصلاح و بهبود",
+    phase3Desc:"بهبود تجربه کاربری، پایداری، عملکرد و کیفیت کلی.",
+    phase4Title:"انتشار و رشد",
+    phase4Desc:"انتشار محصولات آماده، دریافت بازخورد و ادامه مسیر توسعه.",
+    ctaEyebrow:"ایده‌ای در ذهن دارید؟",
+    ctaTitle:'بیایید <span class="gradient-text">آینده را بسازیم.</span>',
+    ctaDesc:"برای سفارش پروژه، همکاری یا پرسیدن سؤال، گفت‌وگو با ZYVORA را شروع کنید.",
+    ctaButton:"شروع گفت‌وگو ↗",emailButton:"ارسال ایمیل",
+    contactEyebrow:"با ما در ارتباط باشید",
+    contactTitle:'ایده بعدی شما <span class="gradient-text">از اینجا شروع می‌شود.</span>',
+    contactDesc:"درباره برنامه، نیاز یا ایده‌ای که می‌خواهید بررسی کنیم، برایمان بنویسید.",
+    contactHeading:"ارتباط با ZYVORA",
+    contactText:"برای سفارش پروژه، پیشنهاد همکاری یا پرسش‌های عمومی از اطلاعات رسمی زیر استفاده کنید.",
+    emailLabel:"ایمیل رسمی",brandLabel:"برند",websiteLabel:"وب‌سایت",
+    nameLabel:"نام شما",yourEmailLabel:"ایمیل شما",
+    subjectLabel:"موضوع پیام",selectOption:"یک موضوع انتخاب کنید",
+    messageLabel:"متن پیام",sendButton:"آماده‌سازی ایمیل ↗",
+    formNote:"این فرم برنامه ایمیل شما را با پیام آماده باز می‌کند و به‌صورت خودکار پیامی ارسال نمی‌کند.",
+    footerTagline:"بساز. خلق کن. نوآوری کن.",
+    copyright:"تمامی حقوق محفوظ است.",
+    footerNote:"یک اکوسیستم مستقل فناوری."
   }
 };
 
-const $  = s => document.querySelector(s);
-const $$ = s => document.querySelectorAll(s);
-const html = document.documentElement;
-const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
-const reduced = () => motionQuery.matches;
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+let currentLang = "en";
 
-let lang = 'fa';       // current language
-let busy = false;      // blocks double clicks during a switch
-let typeId = 0;        // cancels an unfinished typewriter run
+function setLanguage(lang) {
+  if (!translations[lang]) return;
+  currentLang = lang;
 
-/* ========== Wordmark: one span per letter, colored along the gradient ========== */
-(function buildWordmark(){
-  const word = 'Zyvora', a = [139,92,246], b = [34,211,238];  // violet -> cyan
-  [...word].forEach((ch, i) => {
-    const s = document.createElement('span');
-    const t = i / (word.length - 1);
-    s.textContent = ch;
-    s.setAttribute('aria-hidden', 'true');
-    s.style.setProperty('--i', i);
-    s.style.color = `rgb(${a.map((v, k) => Math.round(v + (b[k] - v) * t)).join(',')})`;
-    $('#wordmark').appendChild(s);
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "fa" ? "rtl" : "ltr";
+
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.dataset.i18n;
+    const value = translations[lang][key];
+    if (typeof value === "string") {
+      el.innerHTML = value;
+    }
   });
-})();
 
-/* ========== Typewriter (restarts on every call) ========== */
-async function typeTagline(text){
-  const el = $('#tagline'), id = ++typeId;
-  el.textContent = '';
-  if (reduced()) { el.textContent = text; return; }
-  for (let i = 1; i <= text.length; i++) {
-    await sleep(70);
-    if (id !== typeId) return;           // a newer run took over
-    el.textContent = text.slice(0, i);
-  }
+  const nameInput = document.getElementById("name");
+  const emailInput = document.getElementById("email");
+  const messageInput = document.getElementById("message");
+
+  nameInput.placeholder = lang === "fa" ? "نام و نام خانوادگی" : "John Doe";
+  emailInput.placeholder = lang === "fa" ? "you@example.com" : "you@example.com";
+  messageInput.placeholder = lang === "fa"
+    ? "ایده یا درخواست خود را توضیح دهید..."
+    : "Tell us about your idea...";
+
+  document.getElementById("langToggle").textContent =
+    lang === "en" ? "FA / EN" : "EN / FA";
 }
 
-/* ========== Apply a language: dir, lang, texts, font (via CSS var on [lang]) ========== */
-function applyLang(l){
-  const d = T[l];
-  lang = l;
-  html.lang = l;
-  html.dir = l === 'fa' ? 'rtl' : 'ltr';
-  document.title = d.title;
-  $$('[data-i18n]').forEach(el => el.textContent = d[el.dataset.i18n]);
-  const btn = $('#langBtn');
-  btn.textContent = d.toggle;
-  btn.setAttribute('aria-label', d.toggleAria);
-}
-
-/* Fade out -> swap -> fade in -> retype the tagline */
-async function switchLang(){
-  if (busy) return;
-  busy = true;
-  const next = lang === 'fa' ? 'en' : 'fa';
-  typeId++;                                 // stop any running typewriter
-  document.body.classList.add('fading');
-  await sleep(reduced() ? 0 : 350);
-  applyLang(next);
-  $('#tagline').textContent = '';
-  document.body.classList.remove('fading');
-  typeTagline(T[next].tagline);
-  busy = false;
-}
-$('#langBtn').addEventListener('click', switchLang);
-
-/* ========== Scroll reveal ========== */
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-  });
-}, { threshold: .2 });
-$$('.reveal').forEach(el => io.observe(el));
-
-/* ========== CTA: smooth scroll to the bottom of the page ========== */
-$('#cta').addEventListener('click', () => {
-  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: reduced() ? 'auto' : 'smooth' });
+document.getElementById("langToggle").addEventListener("click", () => {
+  setLanguage(currentLang === "en" ? "fa" : "en");
 });
 
-/* ========== Canvas: soft glowing particles drifting upward ========== */
-(function particles(){
-  const cv = $('#fx'), cx = cv.getContext('2d');
-  const colors = ['139,92,246', '34,211,238', '192,132,252'];
-  let W, H, dpr, P = [];
+/* Mobile navigation */
+const menuBtn = document.getElementById("menuBtn");
+const navLinks = document.getElementById("navLinks");
 
-  function make(){
-    return {
-      x: Math.random() * W, y: Math.random() * H,
-      r: (Math.random() * 1.8 + .8) * dpr,
-      vx: (Math.random() - .5) * .25 * dpr,
-      vy: -(Math.random() * .35 + .08) * dpr,
-      c: colors[Math.floor(Math.random() * colors.length)],
-      ph: Math.random() * 6.28
-    };
+menuBtn.addEventListener("click", () => {
+  const open = navLinks.classList.toggle("open");
+  menuBtn.setAttribute("aria-expanded", String(open));
+  menuBtn.textContent = open ? "✕" : "☰";
+});
+
+navLinks.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", () => {
+    navLinks.classList.remove("open");
+    menuBtn.setAttribute("aria-expanded", "false");
+    menuBtn.textContent = "☰";
+  });
+});
+
+document.addEventListener("click", event => {
+  if (!navLinks.contains(event.target) && !menuBtn.contains(event.target)) {
+    navLinks.classList.remove("open");
+    menuBtn.setAttribute("aria-expanded", "false");
+    menuBtn.textContent = "☰";
   }
-  function resize(){
-    dpr = Math.min(devicePixelRatio || 1, 2);
-    W = cv.width = innerWidth * dpr;
-    H = cv.height = innerHeight * dpr;
-    P = Array.from({ length: Math.max(24, Math.min(70, Math.round(innerWidth / 22))) }, make);
-    if (reduced()) draw(0);                 // static frame when motion is reduced
-  }
-  function draw(t){
-    cx.clearRect(0, 0, W, H);
-    for (const p of P) {
-      const a = .35 + .35 * Math.sin(t * .0015 + p.ph);
-      cx.fillStyle = `rgba(${p.c},${a * .12})`;           // outer glow
-      cx.beginPath(); cx.arc(p.x, p.y, p.r * 5, 0, 6.28); cx.fill();
-      cx.fillStyle = `rgba(${p.c},${a + .15})`;           // bright core
-      cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.28); cx.fill();
+});
+
+/* Navbar and back-to-top */
+const navbar = document.getElementById("navbar");
+const backTop = document.getElementById("backTop");
+
+function updateScrollUI() {
+  navbar.classList.toggle("scrolled", window.scrollY > 25);
+  backTop.classList.toggle("show", window.scrollY > 500);
+}
+window.addEventListener("scroll", updateScrollUI, { passive: true });
+updateScrollUI();
+
+backTop.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+/* Reveal animations */
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible");
+      revealObserver.unobserve(entry.target);
     }
-  }
-  function loop(t){
-    if (!reduced()) {
-      for (const p of P) {
-        p.x += p.vx; p.y += p.vy;
-        if (p.y < -20) { p.y = H + 20; p.x = Math.random() * W; }
-        if (p.x < -20) p.x = W + 20; else if (p.x > W + 20) p.x = -20;
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
+
+/* Active navigation link */
+const sectionObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const id = entry.target.id;
+    document.querySelectorAll(".nav-links a").forEach(link => {
+      link.classList.toggle("active", link.getAttribute("href") === "#" + id);
+    });
+  });
+}, { rootMargin: "-30% 0px -60% 0px" });
+
+document.querySelectorAll("main section[id]").forEach(section => {
+  sectionObserver.observe(section);
+});
+
+/* Subtle card tilt on pointer devices */
+const canHover = window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+
+if (canHover && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  document.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("mousemove", event => {
+      const rect = card.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width;
+      const y = (event.clientY - rect.top) / rect.height;
+      const rotateY = (x - 0.5) * 4;
+      const rotateX = (0.5 - y) * 4;
+      card.style.transform =
+        `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-3px)`;
+    });
+
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "";
+    });
+  });
+
+  const stage = document.getElementById("zStage");
+  const heroVisual = document.querySelector(".hero-visual");
+
+  heroVisual.addEventListener("mousemove", event => {
+    const rect = heroVisual.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    stage.style.animation = "none";
+    stage.style.transform =
+      `rotateY(${x * 12}deg) rotateX(${-y * 10}deg)`;
+  });
+
+  heroVisual.addEventListener("mouseleave", () => {
+    stage.style.transform = "";
+    stage.style.animation = "";
+  });
+}
+
+/* Particle background */
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d", { alpha: true });
+
+let particles = [];
+let canvasWidth = 0;
+let canvasHeight = 0;
+let animationFrame = null;
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function resizeCanvas() {
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  canvasWidth = window.innerWidth;
+  canvasHeight = window.innerHeight;
+
+  canvas.width = Math.round(canvasWidth * ratio);
+  canvas.height = Math.round(canvasHeight * ratio);
+  canvas.style.width = canvasWidth + "px";
+  canvas.style.height = canvasHeight + "px";
+
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+  const count = Math.min(65, Math.floor(canvasWidth / 20));
+  particles = Array.from({ length: count }, () => ({
+    x: Math.random() * canvasWidth,
+    y: Math.random() * canvasHeight,
+    radius: Math.random() * 1.4 + 0.3,
+    vx: (Math.random() - 0.5) * 0.25,
+    vy: (Math.random() - 0.5) * 0.25,
+    alpha: Math.random() * 0.45 + 0.12
+  }));
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+  for (let i = 0; i < particles.length; i++) {
+    const p = particles[i];
+
+    if (!reducedMotion) {
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < 0 || p.x > canvasWidth) p.vx *= -1;
+      if (p.y < 0 || p.y > canvasHeight) p.vy *= -1;
+    }
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(174,132,255,${p.alpha})`;
+    ctx.fill();
+
+    for (let j = i + 1; j < particles.length; j++) {
+      const q = particles[j];
+      const dx = p.x - q.x;
+      const dy = p.y - q.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < 100) {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(q.x, q.y);
+        ctx.strokeStyle = `rgba(143,99,224,${(1 - distance / 100) * 0.12})`;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
       }
-      draw(t);
     }
-    requestAnimationFrame(loop);
   }
-  addEventListener('resize', resize);
-  resize();
-  requestAnimationFrame(loop);
-})();
 
-/* ========== Start ========== */
-applyLang('fa');
-setTimeout(() => typeTagline(T.fa.tagline), reduced() ? 0 : 1300);   // after the wordmark lands
+  if (!reducedMotion) {
+    animationFrame = requestAnimationFrame(drawParticles);
+  }
+}
+
+resizeCanvas();
+drawParticles();
+
+window.addEventListener("resize", () => {
+  if (animationFrame) cancelAnimationFrame(animationFrame);
+  resizeCanvas();
+  drawParticles();
+}, { passive: true });
+
+/* Contact form: prepare an email in the visitor's email application */
+document.getElementById("contactForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const form = event.currentTarget;
+  if (!form.reportValidity()) return;
+
+  const name = document.getElementById("name").value.trim();
+  const senderEmail = document.getElementById("email").value.trim();
+  const subject = document.getElementById("subject").value;
+  const message = document.getElementById("message").value.trim();
+
+  if (!name || !senderEmail || !subject || !message) return;
+
+  const mailSubject = `[ZYVORA Website] ${subject}`;
+  const mailBody = [
+    `Name: ${name}`,
+    `Email: ${senderEmail}`,
+    `Topic: ${subject}`,
+    "",
+    "Message:",
+    message,
+    "",
+    "---",
+    "Sent via the ZYVORA website contact form."
+  ].join("\n");
+
+  const mailto =
+    `mailto:${EMAIL}` +
+    `?subject=${encodeURIComponent(mailSubject)}` +
+    `&body=${encodeURIComponent(mailBody)}`;
+
+  window.location.href = mailto;
+});
+
+/* Footer year */
+document.getElementById("year").textContent = new Date().getFullYear();
+
+/* Initial page setup */
+setLanguage("en");
 </script>
 </body>
 </html>
